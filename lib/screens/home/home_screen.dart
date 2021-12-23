@@ -1,12 +1,11 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/material.dart';
 import 'package:money_manager/screens/category/category_screen.dart';
+import 'package:money_manager/screens/category/popup_add_category.dart';
 import 'package:money_manager/screens/home/widgets/bottom_navigation.dart';
 import 'package:money_manager/screens/transaction/transaction_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
   static ValueNotifier<int> selectedIndex = ValueNotifier(0);
   final _pages = const [
     TransactionScreen(),
@@ -30,11 +29,15 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (selectedIndex.value == 0) {
-            print("Add Transaction");
-            print("0");
           } else {
-            print("Add cateegory");
-            print("1");
+            showCategoryAddPopUp(context);
+
+            // final _sample = CategoryModel(
+            //   id: DateTime.now().microsecondsSinceEpoch.toString(),
+            //   name: "Travel",
+            //   type: Categorytype.expense,
+            // );
+            // CategoryDB().insertCategory(_sample);
           }
         },
         child: const Icon(Icons.add),
