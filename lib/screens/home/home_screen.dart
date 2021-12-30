@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:money_manager/screens/category/category_screen.dart';
 import 'package:money_manager/screens/category/popup_add_category.dart';
 import 'package:money_manager/screens/home/widgets/bottom_navigation.dart';
+import 'package:money_manager/screens/transaction/add_transactions.dart';
 import 'package:money_manager/screens/transaction/transaction_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -29,6 +30,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (selectedIndex.value == 0) {
+            Navigator.of(context).pushNamed(AddTransactonScreen.routeName);
           } else {
             showCategoryAddPopUp(context);
 
