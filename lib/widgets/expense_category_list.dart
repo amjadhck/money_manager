@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:money_manager/db/category/category_db.dart';
-import 'package:money_manager/models/category/category_model.dart';
+import 'package:money_manager/db/category_db.dart';
+import 'package:money_manager/models/category_model.dart';
 
 class ExpenseCategoryList extends StatelessWidget {
   const ExpenseCategoryList({Key? key}) : super(key: key);
