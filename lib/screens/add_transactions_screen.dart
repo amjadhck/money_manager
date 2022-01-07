@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:money_manager/db/category_db.dart';
+import 'package:money_manager/db/transaction_db.dart';
 import 'package:money_manager/models/category_model.dart';
+import 'package:money_manager/models/transaction_model.dart';
 
 class AddTransactonScreen extends StatefulWidget {
   static const routeName = "add-transaction";
@@ -14,7 +16,10 @@ class _AddTransactonScreenState extends State<AddTransactonScreen> {
   DateTime? _selecteDate;
   Categorytype? _selectedCategoryType;
   CategoryModel? _selectedCategoryModal;
-  String? dropdownValue;
+  String? _categoryID;
+
+  final _purposeTextEditingController = TextEditingController();
+  final _amountTextEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -34,10 +39,12 @@ class _AddTransactonScreenState extends State<AddTransactonScreen> {
           child: Column(
             children: [
               TextFormField(
+                controller: _purposeTextEditingController,
                 decoration: const InputDecoration(hintText: 'Purpose'),
                 keyboardType: TextInputType.text,
               ),
               TextFormField(
+                controller: _amountTextEditingController,
                 decoration: const InputDecoration(hintText: 'Amount'),
                 keyboardType: TextInputType.number,
               ),
@@ -76,7 +83,7 @@ class _AddTransactonScreenState extends State<AddTransactonScreen> {
                         onChanged: (newValue) {
                           setState(() {
                             _selectedCategoryType = newValue!;
-                            dropdownValue = null;
+                            _categoryID = null;
                           });
                         },
                       ),
@@ -93,7 +100,7 @@ class _AddTransactonScreenState extends State<AddTransactonScreen> {
                         onChanged: (newValue) {
                           setState(() {
                             _selectedCategoryType = newValue!;
-                            dropdownValue = null;
+                            _categoryID = null;
                           });
                         },
                       ),
@@ -103,7 +110,7 @@ class _AddTransactonScreenState extends State<AddTransactonScreen> {
                 ],
               ),
               DropdownButton(
-                value: dropdownValue,
+                value: _categoryID,
                 hint: const Text("Select Category"),
                 items: (_selectedCategoryType == Categorytype.income
                         ? CategoryDB().incomeCategoryList
@@ -113,16 +120,21 @@ class _AddTransactonScreenState extends State<AddTransactonScreen> {
                   return DropdownMenuItem(
                     value: e.id,
                     child: Text(e.name),
+                    onTap: () {
+                      _selectedCategoryModal = e;
+                    },
                   );
                 }).toList(),
                 onChanged: (String? selectedValue) {
                   setState(() {
-                    dropdownValue = selectedValue!;
+                    _categoryID = selectedValue!;
                   });
                 },
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  addTransaction();
+                },
                 child: const Text("Submit"),
               ),
             ],
@@ -130,5 +142,40 @@ class _AddTransactonScreenState extends State<AddTransactonScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> addTransaction() async {
+    final _purposeText = _purposeTextEditingController.text;
+    final _amountText = _amountTextEditingController.text;
+    if (_purposeText.isEmpty) {
+      return;
+    }
+    if (_amountText.isEmpty) {
+      return;
+    }
+    if (_categoryID == null) {
+      return;
+    }
+    if (_selecteDate == null) {
+      return;
+    }
+    final _parsedAmount = double.tryParse(_amountText);
+    if (_parsedAmount == null) {
+      return;
+    }
+    if (_selectedCategoryModal == null) {
+      return;
+    }
+
+    final _model = TransactionModel(
+      puropse: _purposeText,
+      amount: _parsedAmount,
+      date: _selecteDate!,
+      type: _selectedCategoryType!,
+      cetegory: _selectedCategoryModal!,
+    );
+    TransactionDB.instance.addTransaction(_model);
+    Navigator.of(context).pop();
+    TransactionDB.instance.refresh();
   }
 }
